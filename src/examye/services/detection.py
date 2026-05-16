@@ -137,6 +137,24 @@ def _score(analysis: FrameAnalysis, width: int, height: int) -> None:
     analysis.reasons = reasons
 
 
+def score_from_detections(
+    detections: list[Detection], width: int, height: int
+) -> FrameAnalysis:
+    """Public entrypoint used both by the inference path and by tests."""
+    analysis = FrameAnalysis(detections=list(detections))
+    for d in detections:
+        if d.label == _PERSON:
+            analysis.person_count += 1
+        elif d.label == _PHONE:
+            analysis.phone_count += 1
+        elif d.label == _BOOK:
+            analysis.book_count += 1
+        elif d.label == _LAPTOP:
+            analysis.laptop_count += 1
+    _score(analysis, width, height)
+    return analysis
+
+
 def analyze_frame(image_path: Path, width: int, height: int) -> FrameAnalysis:
     model = _load_model()
     analysis = FrameAnalysis()

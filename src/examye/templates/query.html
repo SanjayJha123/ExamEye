@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}ExamEye · Investigate{% endblock %}
+{% block content %}
+<section class="query-panel">
+  <h1>Ask an investigator question</h1>
+  <p class="muted">Examples: <em>"When did phones appear in video 3?"</em>, <em>"Were two candidates seen close together?"</em></p>
+
+  <form id="query-form">
+    <label>
+      Scope
+      <select id="video-id">
+        <option value="">All videos</option>
+        {% for v in videos %}
+          <option value="{{ v.id }}">#{{ v.id }} · {{ v.filename }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <textarea id="question" rows="3" placeholder="Type your question…" required></textarea>
+    <button type="submit">Ask</button>
+  </form>
+
+  <div id="query-result" class="result"></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/query.js"></script>
+{% endblock %}

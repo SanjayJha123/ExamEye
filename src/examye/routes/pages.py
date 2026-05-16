@@ -20,7 +20,7 @@ def _templates(request: Request):
 def index(request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
     videos = db.query(Video).order_by(Video.created_at.desc()).all()
     return _templates(request).TemplateResponse(
-        "index.html", {"request": request, "videos": videos}
+        request, "index.html", {"videos": videos}
     )
 
 
@@ -45,9 +45,9 @@ def video_detail(video_id: int, request: Request, db: Session = Depends(get_db))
     summary = db.query(Summary).filter(Summary.video_id == video_id).one_or_none()
 
     return _templates(request).TemplateResponse(
+        request,
         "video_detail.html",
         {
-            "request": request,
             "video": video,
             "frames": frames,
             "events": events,
@@ -60,10 +60,10 @@ def video_detail(video_id: int, request: Request, db: Session = Depends(get_db))
 def query_page(request: Request, db: Session = Depends(get_db)) -> HTMLResponse:
     videos = db.query(Video).order_by(Video.created_at.desc()).all()
     return _templates(request).TemplateResponse(
-        "query.html", {"request": request, "videos": videos}
+        request, "query.html", {"videos": videos}
     )
 
 
 @router.get("/alerts", response_class=HTMLResponse)
 def alerts_page(request: Request) -> HTMLResponse:
-    return _templates(request).TemplateResponse("alerts.html", {"request": request})
+    return _templates(request).TemplateResponse(request, "alerts.html", {})

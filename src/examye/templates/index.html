@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}ExamEye · Dashboard{% endblock %}
+{% block content %}
+<section class="upload-panel">
+  <h1>Upload CCTV footage</h1>
+  <p class="muted">Drop in an exam recording (mp4/mov/avi/mkv/webm). ExamEye will extract frames, run object detection, and build an investigation summary.</p>
+  <form id="upload-form" enctype="multipart/form-data">
+    <input type="file" name="file" id="file" accept="video/*" required />
+    <button type="submit">Upload &amp; analyze</button>
+  </form>
+  <div id="upload-status" class="status"></div>
+</section>
+
+<section class="video-list">
+  <h2>Recent videos</h2>
+  {% if videos %}
+  <table>
+    <thead>
+      <tr><th>#</th><th>Filename</th><th>Status</th><th>Size</th><th>Duration</th><th>Uploaded</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for v in videos %}
+      <tr>
+        <td>{{ v.id }}</td>
+        <td><a href="/videos/{{ v.id }}">{{ v.filename }}</a></td>
+        <td><span class="badge badge-{{ v.status }}">{{ v.status }}</span></td>
+        <td>{{ '%.2f' % (v.size_bytes / (1024*1024)) }} MB</td>
+        <td>{% if v.duration_seconds %}{{ '%.1f' % v.duration_seconds }}s{% else %}—{% endif %}</td>
+        <td>{{ v.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td>
+          <button class="link-button" data-delete="{{ v.id }}">delete</button>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="muted">No videos uploaded yet.</p>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/app.js"></script>
+{% endblock %}

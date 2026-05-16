@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}ExamEye · Live Alerts{% endblock %}
+{% block content %}
+<section class="alerts-panel">
+  <h1>Live alerts</h1>
+  <p class="muted">Real-time stream of medium- and high-severity events as videos are processed. Open this in a second tab while uploading.</p>
+  <div id="ws-status" class="status">Connecting…</div>
+  <ul id="alert-feed" class="alert-feed"></ul>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="/static/alerts.js"></script>
+{% endblock %}

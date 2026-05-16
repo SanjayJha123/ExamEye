@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}ExamEye · {{ video.filename }}{% endblock %}
+{% block content %}
+<section class="video-header">
+  <h1>{{ video.filename }}</h1>
+  <p class="meta">
+    <span class="badge badge-{{ video.status }}">{{ video.status }}</span>
+    {% if video.duration_seconds %}<span>{{ '%.1f' % video.duration_seconds }}s</span>{% endif %}
+    {% if video.fps %}<span>{{ '%.1f' % video.fps }} fps</span>{% endif %}
+    {% if video.width and video.height %}<span>{{ video.width }}×{{ video.height }}</span>{% endif %}
+    <span>{{ '%.2f' % (video.size_bytes / (1024*1024)) }} MB</span>
+  </p>
+  {% if video.error %}<p class="error">{{ video.error }}</p>{% endif %}
+</section>
+
+{% if summary %}
+<section class="summary">
+  <h2>Investigation Summary <small class="muted">(source: {{ summary.source }}, severity: {{ summary.severity }})</small></h2>
+  <h3>{{ summary.headline }}</h3>
+  <pre>{{ summary.body }}</pre>
+  <form method="post" action="/api/videos/{{ video.id }}/summary" class="inline-form">
+    <button type="button" data-regenerate="{{ video.id }}">Regenerate</button>
+  </form>
+</section>
+{% else %}
+<section class="summary muted">
+  <p>Summary not generated yet. {% if video.status == 'completed' %}<button type="button" data-regenerate="{{ video.id }}">Generate now</button>{% endif %}</p>
+</section>
+{% endif %}
+
+<section class="events">
+  <h2>Detection events ({{ events|length }})</h2>
+  {% if events %}
+  <table>
+    <thead><tr><th>t</th><th>Severity</th><th>Kind</th><th>Score</th><th>Description</th></tr></thead>
+    <tbody>
+    {% for e in events %}
+      <tr class="ev ev-{{ e.severity }}">
+        <td>{{ '%.1f' % e.timestamp_seconds }}s</td>
+        <td><span class="badge sev-{{ e.severity }}">{{ e.severity }}</span></td>
+        <td>{{ e.kind }}</td>
+        <td>{{ '%.2f' % e.score }}</td>
+        <td>{{ e.description }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="muted">No suspicious events detected.</p>
+  {% endif %}
+</section>
+
+<section class="frames">
+  <h2>Frames ({{ frames|length }})</h2>
+  <label><input type="checkbox" id="susp-only" /> Show suspicious frames only</label>
+  <div class="frame-grid">
+    {% for f in frames %}
+      <figure class="frame" data-suspicion="{{ '%.2f' % f.suspicion_score }}">
+        <img src="/media/frames/{{ video.id }}/{{ f.stored_path.split('/')[-1] }}" loading="lazy" alt="frame {{ f.frame_index }}" />
+        <figcaption>
+          t={{ '%.1f' % f.timestamp_seconds }}s ·
+          persons={{ f.person_count }} ·
+          phones={{ f.phone_count }} ·
+          susp={{ '%.2f' % f.suspicion_score }}
+        </figcaption>
+      </figure>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/video_detail.js"></script>
+{% endblock %}
