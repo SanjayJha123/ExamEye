@@ -28,10 +28,20 @@ class Settings(BaseSettings):
     yolo_conf: float = 0.35
     suspicion_threshold: float = 0.55
 
-    vllm_base_url: str = "http://localhost:8001/v1"
-    vllm_api_key: str = "EMPTY"
-    vllm_model: str = "google/gemma-2-9b-it"
-    vllm_timeout_seconds: float = 30.0
+    # LLM backend selection:
+    #   "ollama"  — local Ollama daemon (default; ~5GB RAM with gemma4:e2b)
+    #   "openai"  — any OpenAI-compatible /v1/chat/completions endpoint
+    #               (vLLM, LiteLLM, OpenAI itself, LM Studio, …)
+    #   "stub"    — skip the network entirely; always use the deterministic fallback
+    llm_backend: str = "ollama"
+    llm_base_url: str = "http://localhost:11434/v1"
+    llm_api_key: str = "ollama"  # Ollama ignores this; OpenAI-style servers use Bearer auth.
+    llm_model: str = "gemma4:e2b"
+    llm_timeout_seconds: float = 120.0
+
+    # Where to reach the Ollama daemon for management ops (pull / list / ping).
+    # Distinct from llm_base_url because Ollama's native API isn't /v1-prefixed.
+    ollama_host: str = "http://localhost:11434"
 
     def ensure_dirs(self) -> None:
         self.upload_dir.mkdir(parents=True, exist_ok=True)
