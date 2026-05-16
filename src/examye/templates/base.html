@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}ExamEye{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <a href="/"><span class="logo">●</span> ExamEye</a>
+    </div>
+    <nav>
+      <a href="/">Dashboard</a>
+      <a href="/query">Investigate</a>
+      <a href="/alerts">Live Alerts</a>
+      <a href="/health" target="_blank" rel="noopener">Health</a>
+    </nav>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="footer">
+    <small>ExamEye · AI exam surveillance · v0.1.0</small>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
