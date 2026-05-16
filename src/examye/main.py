@@ -24,7 +24,12 @@ TEMPLATES = Jinja2Templates(directory=str(_BASE / "templates"))
 
 @asynccontextmanager
 async def _lifespan(app: FastAPI):
+    import asyncio
+
+    from .services.alerts import alert_hub
+
     init_db()
+    alert_hub.set_main_loop(asyncio.get_running_loop())
     yield
 
 

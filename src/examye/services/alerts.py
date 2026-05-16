@@ -43,16 +43,19 @@ class AlertHub:
         for ws in dead:
             self._clients.discard(ws)
 
+    def set_main_loop(self, loop: asyncio.AbstractEventLoop) -> None:
+        self._main_loop = loop
+
     def broadcast_threadsafe(self, message: dict[str, Any]) -> None:
         """Send from any thread; safely no-ops when no event loop is running."""
-        try:
-            loop = asyncio.get_event_loop()
-        except RuntimeError:
-            return
+        loop = getattr(self, "_main_loop", None)
+        if loop is None:
+            try:
+                loop = asyncio.get_running_loop()
+            except RuntimeError:
+                return
         if loop.is_running():
             asyncio.run_coroutine_threadsafe(self.broadcast(message), loop)
-        else:  # pragma: no cover - rare in production
-            loop.run_until_complete(self.broadcast(message))
 
 
 alert_hub = AlertHub()
