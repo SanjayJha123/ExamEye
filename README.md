@@ -1,6 +1,11 @@
+[!NOTE] This is an Submission to Build With AI - Gemma 4 Event
+
+[!TIP] Sanjay Jha, Vijay Soni, Anil Kumar
+
 # ExamEye
 
 AI-powered exam surveillance and investigation platform. Turns passive CCTV footage into intelligent investigation assistants using YOLOv8 for detection and Gemma 4 (via vLLM) for natural-language reasoning.
+
 
 ## Stack
 
